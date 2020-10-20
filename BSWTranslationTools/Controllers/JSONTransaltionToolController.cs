@@ -21,12 +21,14 @@ namespace BSWTranslationTools.API.Controllers
         private readonly ILoggerService _logger;
         private readonly IMapper _Mapper;
         private readonly IJsonDetailsRepository _JsonDetailsRepository;
+        private readonly IJsonDetailsKeyRepository _JsonDetailsKeyRepository;
 
-        public JSONTransaltionToolController(ILoggerService logger, IMapper Mapper, IJsonDetailsRepository JsonDetailsRepository)
+        public JSONTransaltionToolController(ILoggerService logger, IMapper Mapper, IJsonDetailsRepository JsonDetailsRepository, IJsonDetailsKeyRepository JsonDetailsKeyRepository)
         {
             _logger = logger;
             _Mapper = Mapper;
             _JsonDetailsRepository = JsonDetailsRepository;
+            _JsonDetailsKeyRepository = JsonDetailsKeyRepository;
         }
         [HttpGet]
         [AllowAnonymous]
@@ -185,7 +187,7 @@ namespace BSWTranslationTools.API.Controllers
             }
         }
         [HttpPost]
-        [Route("Execute ProcJsonSimulation")]
+        [Route("ExecuteProcJsonSimulation")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -201,8 +203,8 @@ namespace BSWTranslationTools.API.Controllers
                     return BadRequest(ModelState);
                 }
                 int UID = _JsonDetailsRepository.ExecuteProcJsonSimulation();
-                var JsonDetaillist = await _JsonDetailsRepository.FindFaultStatus();
-                var respose = _Mapper.Map<IList<JsonDetailsDTO>>(JsonDetaillist);
+                var JsonDetaillist = await _JsonDetailsKeyRepository.FindFaultStatus();
+                var respose = _Mapper.Map<IList<JsonDetailsKeyDTO>>(JsonDetaillist);
                 _logger.LogInfo("Json Role created");
                 return Ok(respose);
             }

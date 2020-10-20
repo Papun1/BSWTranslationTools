@@ -6,8 +6,7 @@ using UserManagementAPI.Repository.Contracts;
 
 namespace BSWTranslationTools.API.Repository.Contracts
 {
-   public  interface IJsonDetailsRepository:IRepositoryBase<JsonDetails>
+    public interface IJsonDetailsKeyRepository:IRepositoryBase<JsonDetailsKey>
     {
     }
-  
 }

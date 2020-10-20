@@ -18,6 +18,16 @@ namespace BSWTranslationTools.API.Entities
         public string Status { get; set; }
 
     }
+    public class JsonDetailsNewDTO
+    {
+        [Key]
+        public int JsonID { get; set; }
+        public string Keys { get; set; }
+        public string KeyValues1 { get; set; }
+        public string KeyValues2 { get; set; }
+        public string Status { get; set; }
+
+    }
     public class JsonDetailsCreatedDTO
     {
         [Key]

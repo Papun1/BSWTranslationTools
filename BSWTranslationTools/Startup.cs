@@ -55,6 +55,7 @@ namespace BSWTranslationTools.API
             });
             services.AddSingleton<ILoggerService, LoggerService>();
             services.AddScoped<IJsonDetailsRepository, JsonDetailsRepository>();
+            services.AddScoped<IJsonDetailsKeyRepository, JsonDetailsKeyRepository>();
             //services.AddScoped<IAudit_logs, AuditService>();
             services.AddControllers();
         }
@@ -75,7 +76,12 @@ namespace BSWTranslationTools.API
 
             app.UseHttpsRedirection();
 
-            app.UseCors("CrosPolicy");
+            //app.UseCors("CrosPolicy");
+            app.UseCors(x => x
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .SetIsOriginAllowed(origin => true) // allow any origin
+                .AllowCredentials());
 
             app.UseRouting();
 

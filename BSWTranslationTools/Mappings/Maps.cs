@@ -18,8 +18,12 @@ namespace UserManagementAPI.Mappings
         public Maps()
         {
             CreateMap<JsonDetails, JsonDetailsDTO>().ReverseMap();
+            CreateMap<JsonDetails, JsonDetailsNewDTO>().ReverseMap();
             CreateMap<JsonDetails, JsonDetailsCreatedDTO>().ReverseMap();
             CreateMap<JsonDetails, JsonDetailsUpdatedDTO>().ReverseMap();
+            CreateMap<JsonDetailsKey, JsonDetailsKeyDTO>().ReverseMap();
+            CreateMap<JsonDetailsKey, JsonDetailsKeyCreateDTO>().ReverseMap();
+            CreateMap<JsonDetailsKey, JsonDetailsKeyUpdateDTO>().ReverseMap();
 
         }
     }

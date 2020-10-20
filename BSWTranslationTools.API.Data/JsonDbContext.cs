@@ -14,5 +14,6 @@ namespace BSWTranslationTools.API.Data
 
         }
         public DbSet<JsonDetails> jsonDetails { get; set; }
+        public DbSet<JsonDetailsKey> jsonDetailsKey { get; set; }
     }
 }
