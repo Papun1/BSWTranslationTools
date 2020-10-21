@@ -14,7 +14,7 @@ namespace BSWTranslationTools.API.Entities
         public string Keys { get; set; }
         [Required(ErrorMessage = "Please enter KeyValues1")]
         public string KeyValues1 { get; set; }
-        [Required(ErrorMessage = "Please enter KeyValues1")]
+        [Required(ErrorMessage = "Please enter KeyValues2")]
         public string KeyValues2 { get; set; }
       
 
@@ -28,7 +28,7 @@ namespace BSWTranslationTools.API.Entities
         public string Keys { get; set; }
         [Required(ErrorMessage = "Please enter KeyValues1")]
         public string KeyValues1 { get; set; }
-        [Required(ErrorMessage = "Please enter KeyValues1")]
+        [Required(ErrorMessage = "Please enter KeyValues2")]
         public string KeyValues2 { get; set; }
 
 
@@ -42,7 +42,7 @@ namespace BSWTranslationTools.API.Entities
         public string Keys { get; set; }
         [Required(ErrorMessage = "Please enter KeyValues1")]
         public string KeyValues1 { get; set; }
-        [Required(ErrorMessage = "Please enter KeyValues1")]
+        [Required(ErrorMessage = "Please enter KeyValues2")]
         public string KeyValues2 { get; set; }
 
 
