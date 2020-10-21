@@ -26,7 +26,6 @@ namespace BSWTranslationTools.API.Repository
         {
 
             await _db.jsonDetails.AddAsync(entity);
-
             return await Save();
         }
 

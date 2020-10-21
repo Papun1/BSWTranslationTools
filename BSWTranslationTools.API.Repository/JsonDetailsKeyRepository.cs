@@ -18,29 +18,35 @@ namespace BSWTranslationTools.API.Repository
         {
             _db = db;
         }
-        public Task<bool> Create(JsonDetailsKey entity)
+        public async Task<bool> Create(JsonDetailsKey entity)
         {
-            throw new NotImplementedException();
+            await _db.jsonDetailsKey.AddAsync(entity);
+            return await Save();
         }
 
-        public Task<bool> Delete(JsonDetailsKey entity)
+        public async Task<bool> Delete(JsonDetailsKey entity)
         {
-            throw new NotImplementedException();
+            _db.jsonDetailsKey.Remove(entity);
+            return await Save();
         }
 
         public int ExecuteProcJsonSimulation()
         {
-            throw new NotImplementedException();
+            string SQLQuery = $"EXECUTE ProcJsonSimulation";
+            var JsonDetails = _db.Database.ExecuteSqlRaw(SQLQuery);
+            return JsonDetails;
         }
 
-        public Task<IList<JsonDetailsKey>> FindAll()
+        public async Task<IList<JsonDetailsKey>> FindAll()
         {
-            throw new NotImplementedException();
+            var JsonDetails = await _db.jsonDetailsKey.ToListAsync();
+            return JsonDetails;
         }
 
-        public Task<JsonDetailsKey> FindById(int id)
+        public async Task<JsonDetailsKey> FindById(int id)
         {
-            throw new NotImplementedException();
+            var JsonDetails = await _db.jsonDetailsKey.FindAsync(id);
+            return JsonDetails;
         }
 
         public async Task<IList<JsonDetailsKey>> FindFaultStatus()
@@ -49,19 +55,21 @@ namespace BSWTranslationTools.API.Repository
             return JsonDetails;
         }
 
-        public Task<bool> isExist(int id)
+        public async Task<bool> isExist(int id)
         {
-            throw new NotImplementedException();
+            return await _db.jsonDetailsKey.AnyAsync(q => q.JsonKeyID == id);
         }
 
-        public Task<bool> Save()
+        public async Task<bool> Save()
         {
-            throw new NotImplementedException();
+            var changes = await _db.SaveChangesAsync();
+            return changes > 0;
         }
 
-        public Task<bool> Update(JsonDetailsKey entity)
+        public async Task<bool> Update(JsonDetailsKey entity)
         {
-            throw new NotImplementedException();
+            _db.jsonDetailsKey.Update(entity);
+            return await Save();
         }
     }
 }

@@ -56,7 +56,7 @@ namespace BSWTranslationTools.API
             services.AddSingleton<ILoggerService, LoggerService>();
             services.AddScoped<IJsonDetailsRepository, JsonDetailsRepository>();
             services.AddScoped<IJsonDetailsKeyRepository, JsonDetailsKeyRepository>();
-            //services.AddScoped<IAudit_logs, AuditService>();
+            services.AddScoped<IAudit_logs, AuditService>();
             services.AddControllers();
         }
 

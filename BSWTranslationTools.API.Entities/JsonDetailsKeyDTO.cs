@@ -13,7 +13,7 @@ namespace BSWTranslationTools.API.Entities
         public string Keys { get; set; }
         public string KeyValues1 { get; set; }
         public string KeyValues2 { get; set; }
-        public string Status { get; set; }
+      
 
     }
     public class JsonDetailsKeyCreateDTO
@@ -24,7 +24,7 @@ namespace BSWTranslationTools.API.Entities
         public string Keys { get; set; }
         public string KeyValues1 { get; set; }
         public string KeyValues2 { get; set; }
-        public string Status { get; set; }
+       
 
     }
     public class JsonDetailsKeyUpdateDTO
@@ -35,7 +35,7 @@ namespace BSWTranslationTools.API.Entities
         public string Keys { get; set; }
         public string KeyValues1 { get; set; }
         public string KeyValues2 { get; set; }
-        public string Status { get; set; }
+      
 
     }
 }

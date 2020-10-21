@@ -22,13 +22,16 @@ namespace BSWTranslationTools.API.Controllers
         private readonly IMapper _Mapper;
         private readonly IJsonDetailsRepository _JsonDetailsRepository;
         private readonly IJsonDetailsKeyRepository _JsonDetailsKeyRepository;
+        private readonly IAudit_logs _audit_Logs;
 
-        public JSONTransaltionToolController(ILoggerService logger, IMapper Mapper, IJsonDetailsRepository JsonDetailsRepository, IJsonDetailsKeyRepository JsonDetailsKeyRepository)
+        public JSONTransaltionToolController(ILoggerService logger, IMapper Mapper, IJsonDetailsRepository JsonDetailsRepository,
+            IJsonDetailsKeyRepository JsonDetailsKeyRepository, IAudit_logs audit_Logs)
         {
             _logger = logger;
             _Mapper = Mapper;
             _JsonDetailsRepository = JsonDetailsRepository;
             _JsonDetailsKeyRepository = JsonDetailsKeyRepository;
+            _audit_Logs = audit_Logs;
         }
         [HttpGet]
         [AllowAnonymous]
@@ -39,8 +42,8 @@ namespace BSWTranslationTools.API.Controllers
             try
             {
                 _logger.LogInfo("Attempted Get all Json list");
-                var JsonDetaillist = await _JsonDetailsRepository.FindAll();
-                var respose = _Mapper.Map<IList<JsonDetailsDTO>>(JsonDetaillist);
+                var JsonDetaillist = await _JsonDetailsKeyRepository.FindAll();
+                var respose = _Mapper.Map<IList<JsonDetailsKeyDTO>>(JsonDetaillist);
                 _logger.LogInfo("Successfully got all the list");
                 return Ok(respose);
             }
@@ -60,13 +63,13 @@ namespace BSWTranslationTools.API.Controllers
             try
             {
                 _logger.LogInfo($"Attempted Get the Json record with id:{id}");
-                var JsonDetaillist = await _JsonDetailsRepository.FindById(id);
+                var JsonDetaillist = await _JsonDetailsKeyRepository.FindById(id);
                 if (JsonDetaillist == null)
                 {
                     _logger.LogWarn($"Json records with id:{id} was not found");
                     return NotFound();
                 }
-                var respose = _Mapper.Map<JsonDetailsDTO>(JsonDetaillist);
+                var respose = _Mapper.Map<JsonDetailsKeyDTO>(JsonDetaillist);
                 _logger.LogInfo($"Successfully got the Json records with id:{id}");
                 return Ok(respose);
             }
@@ -81,7 +84,7 @@ namespace BSWTranslationTools.API.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Create([FromBody] JsonDetailsCreatedDTO jsonDetailsCreatedDTO)
+        public async Task<IActionResult> Create([FromBody] JsonDetailsKeyCreateDTO jsonDetailsCreatedDTO)
         {
             try
             {
@@ -97,14 +100,21 @@ namespace BSWTranslationTools.API.Controllers
                     _logger.LogWarn("Json record data was incomplete");
                     return BadRequest(ModelState);
                 }
-                var jsonrecord = _Mapper.Map<JsonDetails>(jsonDetailsCreatedDTO);
-                var isSuccess = await _JsonDetailsRepository.Create(jsonrecord);
+                var jsonrecord = _Mapper.Map<JsonDetailsKey>(jsonDetailsCreatedDTO);
+                var isSuccess = await _JsonDetailsKeyRepository.Create(jsonrecord);
                 if (!isSuccess)
                 {
                     return InternalError("Json records creation failed");
                 }
                 _logger.LogInfo("Json record created");
-
+                Audit_logs audit = new Audit_logs()
+                {
+                    jsonKeyid = jsonrecord.JsonKeyID,
+                    action = "Create",
+                    log = $"Json records has created,Key:{jsonrecord.Keys},KeyValues1:{jsonrecord.KeyValues1},KeyValues2:{jsonrecord.KeyValues2}",
+                    datetime = DateTime.Now
+                };
+                await _audit_Logs.Create(audit);
                 return Created("Create", new { jsonrecord });
             }
             catch (Exception ex)
@@ -117,12 +127,12 @@ namespace BSWTranslationTools.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Update(int id, [FromBody] JsonDetailsUpdatedDTO jsonDetailsUpdatedDTO)
+        public async Task<IActionResult> Update(int id, [FromBody] JsonDetailsKeyUpdateDTO jsonDetailsUpdatedDTO)
         {
             try
             {
                 _logger.LogInfo($"Json detail update with id:{id}");
-                if (id < 1 || jsonDetailsUpdatedDTO == null || id != jsonDetailsUpdatedDTO.JsonID)
+                if (id < 1 || jsonDetailsUpdatedDTO == null || id != jsonDetailsUpdatedDTO.JsonKeyID)
                 {
                     _logger.LogWarn("Json records update failed with bad data");
                     return BadRequest();
@@ -138,13 +148,21 @@ namespace BSWTranslationTools.API.Controllers
                     _logger.LogWarn("Json data was incomplete");
                     return BadRequest(ModelState);
                 }
-                var jsonrecords = _Mapper.Map<JsonDetails>(jsonDetailsUpdatedDTO);
-                var isSuccess = await _JsonDetailsRepository.Update(jsonrecords);
+                var jsonrecord = _Mapper.Map<JsonDetailsKey>(jsonDetailsUpdatedDTO);
+                var isSuccess = await _JsonDetailsKeyRepository.Update(jsonrecord);
                 if (!isSuccess)
                 {
                     return InternalError("Json record update operation failed");
                 }
                 _logger.LogInfo("Json records updated");
+                Audit_logs audit = new Audit_logs()
+                {
+                    jsonKeyid = jsonrecord.JsonKeyID,
+                    action = "Update",
+                    log = $"Json records has Updated,Key:{jsonrecord.Keys},KeyValues1:{jsonrecord.KeyValues1},KeyValues2:{jsonrecord.KeyValues2}",
+                    datetime = DateTime.Now
+                };
+                await _audit_Logs.Create(audit);
                 return NoContent();
             }
             catch (Exception ex)
@@ -166,19 +184,27 @@ namespace BSWTranslationTools.API.Controllers
                     _logger.LogWarn("Json details not avaible");
                     return BadRequest();
                 }
-                var isExist = await _JsonDetailsRepository.isExist(id);
+                var isExist = await _JsonDetailsKeyRepository.isExist(id);
                 if (!isExist)
                 {
                     _logger.LogWarn($"Json details with id:{id} was not found");
                     return NotFound();
                 }
-                var Jsonrecords = await _JsonDetailsRepository.FindById(id);
-                var isSuccess = await _JsonDetailsRepository.Delete(Jsonrecords);
+                var jsonrecord = await _JsonDetailsKeyRepository.FindById(id);
+                var isSuccess = await _JsonDetailsKeyRepository.Delete(jsonrecord);
                 if (!isSuccess)
                 {
                     return InternalError("Json records delete failed");
                 }
                 _logger.LogInfo("Json records delete");
+                Audit_logs audit = new Audit_logs()
+                {
+                    jsonKeyid = jsonrecord.JsonKeyID,
+                    action = "Delete",
+                    log = $"Json records has Deleted,Key:{jsonrecord.Keys},KeyValues1:{jsonrecord.KeyValues1},KeyValues2:{jsonrecord.KeyValues2}",
+                    datetime = DateTime.Now
+                };
+                await _audit_Logs.Create(audit);
                 return NoContent();
             }
             catch (Exception ex)
@@ -186,8 +212,8 @@ namespace BSWTranslationTools.API.Controllers
                 return InternalError($"{ex.Message}-{ex.InnerException}");
             }
         }
-        [HttpPost]
-        [Route("ExecuteProcJsonSimulation")]
+        [HttpGet]
+        [Route("Simulation")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -202,7 +228,7 @@ namespace BSWTranslationTools.API.Controllers
                     _logger.LogWarn("Json data was incomplete");
                     return BadRequest(ModelState);
                 }
-                int UID = _JsonDetailsRepository.ExecuteProcJsonSimulation();
+                //  int UID = _JsonDetailsRepository.ExecuteProcJsonSimulation();
                 var JsonDetaillist = await _JsonDetailsKeyRepository.FindFaultStatus();
                 var respose = _Mapper.Map<IList<JsonDetailsKeyDTO>>(JsonDetaillist);
                 _logger.LogInfo("Json Role created");
