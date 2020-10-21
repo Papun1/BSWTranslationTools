@@ -10,8 +10,11 @@ namespace BSWTranslationTools.API.Entities
         [Key]
         public int JsonKeyID { get; set; }
         public int ProjectId { get; set; }
+        [Required(ErrorMessage = "Please enter Keys")]
         public string Keys { get; set; }
+        [Required(ErrorMessage = "Please enter KeyValues1")]
         public string KeyValues1 { get; set; }
+        [Required(ErrorMessage = "Please enter KeyValues1")]
         public string KeyValues2 { get; set; }
       
 
@@ -21,10 +24,13 @@ namespace BSWTranslationTools.API.Entities
         [Key]
         
         public int ProjectId { get; set; }
+        [Required(ErrorMessage = "Please enter Keys")]
         public string Keys { get; set; }
+        [Required(ErrorMessage = "Please enter KeyValues1")]
         public string KeyValues1 { get; set; }
+        [Required(ErrorMessage = "Please enter KeyValues1")]
         public string KeyValues2 { get; set; }
-       
+
 
     }
     public class JsonDetailsKeyUpdateDTO
@@ -32,10 +38,13 @@ namespace BSWTranslationTools.API.Entities
         [Key]
         public int JsonKeyID { get; set; }
         public int ProjectId { get; set; }
+        [Required(ErrorMessage = "Please enter Keys")]
         public string Keys { get; set; }
+        [Required(ErrorMessage = "Please enter KeyValues1")]
         public string KeyValues1 { get; set; }
+        [Required(ErrorMessage = "Please enter KeyValues1")]
         public string KeyValues2 { get; set; }
-      
+
 
     }
 }
