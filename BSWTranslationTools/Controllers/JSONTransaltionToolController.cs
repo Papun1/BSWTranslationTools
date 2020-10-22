@@ -121,9 +121,8 @@ namespace BSWTranslationTools.API.Controllers
             {
                 return InternalError($"{ex.Message}-{ex.InnerException}");
             }
-
         }
-        [HttpPut("{id}")]
+        [HttpPost("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -163,7 +162,8 @@ namespace BSWTranslationTools.API.Controllers
                     datetime = DateTime.Now
                 };
                 await _audit_Logs.Create(audit);
-                return NoContent();
+                 return NoContent();
+              
             }
             catch (Exception ex)
             {
