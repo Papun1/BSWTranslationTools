@@ -37,6 +37,11 @@ namespace BSWTranslationTools.API.Repository
             throw new NotImplementedException();
         }
 
+        public string ExportRecords()
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<IList<Audit_logs>> FindAll()
         {
             var Users = await _db.audit_Logs.ToListAsync();
@@ -76,6 +81,11 @@ namespace BSWTranslationTools.API.Repository
         {
             _db.audit_Logs.Update(entity);
             return await Save();
+        }
+
+        public void WriteToFile(string filePAth, string content)
+        {
+            throw new NotImplementedException();
         }
     }
   

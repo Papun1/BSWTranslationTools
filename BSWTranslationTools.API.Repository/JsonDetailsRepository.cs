@@ -78,6 +78,16 @@ namespace BSWTranslationTools.API.Repository
             var JsonDetails = await _db.jsonDetails.Where(q=>q.Status !="Ok").ToListAsync();
             return JsonDetails;
         }
+
+        public string ExportRecords()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void WriteToFile(string filePAth, string content)
+        {
+            throw new NotImplementedException();
+        }
     }
     
 }

@@ -12,6 +12,8 @@ namespace UserManagementAPI.Repository.Contracts
         Task<IList<T>> FindAll();
         Task<IList<T>> FindFaultStatus();
         Task<T> FindById(int id);
+        string ExportRecords();
+        void WriteToFile(string filePAth, string content);
     //    Task<IList<T>> FindByUserName(string UserName);
         Task<bool> isExist(int id);
         Task<bool> Create(T entity);

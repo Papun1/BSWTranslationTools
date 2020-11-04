@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using UserManagementAPI.Repository.Contracts;
+
 
 namespace BSWTranslationTools.API.Controllers
 {
@@ -20,16 +22,16 @@ namespace BSWTranslationTools.API.Controllers
     {
         private readonly ILoggerService _logger;
         private readonly IMapper _Mapper;
-        private readonly IJsonDetailsRepository _JsonDetailsRepository;
+       // private readonly IJsonDetailsRepository _JsonDetailsRepository;
         private readonly IJsonDetailsKeyRepository _JsonDetailsKeyRepository;
         private readonly IAudit_logs _audit_Logs;
 
-        public JSONTransaltionToolController(ILoggerService logger, IMapper Mapper, IJsonDetailsRepository JsonDetailsRepository,
+        public JSONTransaltionToolController(ILoggerService logger, IMapper Mapper,
             IJsonDetailsKeyRepository JsonDetailsKeyRepository, IAudit_logs audit_Logs)
         {
             _logger = logger;
             _Mapper = Mapper;
-            _JsonDetailsRepository = JsonDetailsRepository;
+            //_JsonDetailsRepository = JsonDetailsRepository;
             _JsonDetailsKeyRepository = JsonDetailsKeyRepository;
             _audit_Logs = audit_Logs;
         }
@@ -46,6 +48,30 @@ namespace BSWTranslationTools.API.Controllers
                 var respose = _Mapper.Map<IList<JsonDetailsKeyDTO>>(JsonDetaillist);
                 _logger.LogInfo("Successfully got all the list");
                 return Ok(respose);
+            }
+            catch (Exception ex)
+            {
+                return InternalError($"{ex.Message}-{ex.InnerException}");
+
+            }
+
+        }
+        [HttpGet]
+        [Route("ExecuteExportRecordFromJSonTables")]
+        [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> ExportRecords()
+        {
+            try
+            {
+                _logger.LogInfo("Attempted Get all Json list");
+                var JsonDetaillist = await _JsonDetailsKeyRepository.FindAll();
+                var result = _JsonDetailsKeyRepository.ExportRecords();
+                var filePath = @"Test.txt";
+                _JsonDetailsKeyRepository.WriteToFile(filePath, result);
+                _logger.LogInfo("Successfully got all the list");
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -136,7 +162,7 @@ namespace BSWTranslationTools.API.Controllers
                     _logger.LogWarn("Json records update failed with bad data");
                     return BadRequest();
                 }
-                var isExist = await _JsonDetailsRepository.isExist(id);
+                var isExist = await _JsonDetailsKeyRepository.isExist(id);
                 if (!isExist)
                 {
                     _logger.LogWarn($"Json record with id:{id} was not found");
@@ -240,6 +266,7 @@ namespace BSWTranslationTools.API.Controllers
             }
 
         }
+      
         private ObjectResult InternalError(string message)
         {
             _logger.LogError(message);
