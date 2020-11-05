@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using BSWTranslationTools.API.Entities;
@@ -9,6 +10,7 @@ using BSWTranslationTools.API.Repository.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 using UserManagementAPI.Repository.Contracts;
 
 
@@ -22,7 +24,7 @@ namespace BSWTranslationTools.API.Controllers
     {
         private readonly ILoggerService _logger;
         private readonly IMapper _Mapper;
-       // private readonly IJsonDetailsRepository _JsonDetailsRepository;
+        // private readonly IJsonDetailsRepository _JsonDetailsRepository;
         private readonly IJsonDetailsKeyRepository _JsonDetailsKeyRepository;
         private readonly IAudit_logs _audit_Logs;
 
@@ -68,10 +70,12 @@ namespace BSWTranslationTools.API.Controllers
                 _logger.LogInfo("Attempted Get all Json list");
                 var JsonDetaillist = await _JsonDetailsKeyRepository.FindAll();
                 var result = _JsonDetailsKeyRepository.ExportRecords();
-                var filePath = @"Test.txt";
+                var filePath = @"ExportJson.tsx";
                 _JsonDetailsKeyRepository.WriteToFile(filePath, result);
+                byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
                 _logger.LogInfo("Successfully got all the list");
-                return Ok(result);
+                return File(fileBytes, "application/force-download", filePath);
+                // return Ok(result);
             }
             catch (Exception ex)
             {
@@ -188,8 +192,8 @@ namespace BSWTranslationTools.API.Controllers
                     datetime = DateTime.Now
                 };
                 await _audit_Logs.Create(audit);
-                 return NoContent();
-              
+                return NoContent();
+
             }
             catch (Exception ex)
             {
@@ -266,7 +270,16 @@ namespace BSWTranslationTools.API.Controllers
             }
 
         }
-      
+        private string GetContentType(string path)
+        {
+            var provider = new FileExtensionContentTypeProvider();
+            string contentType;
+            if (!provider.TryGetContentType(path, out contentType))
+            {
+                contentType = "application/octet-stream";
+            }
+            return contentType;
+        }
         private ObjectResult InternalError(string message)
         {
             _logger.LogError(message);
